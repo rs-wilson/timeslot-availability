@@ -37,8 +37,8 @@ All endpoints use the same json request body to determine the timeslot.
 Request Body:
 ```json
 {
-  "start_timestamp":"{unix_timestamp_seconds}"
-  "duration":"{seconds}"
+  "start_timestamp": "{unix_timestamp_seconds}",
+  "duration": "{seconds}"
 }
 ```
 
@@ -47,7 +47,7 @@ If an error occurs, the error message will be returned in a response body with t
 Error Body:
 ```json
 {
-  "error":"{message}"
+  "error": "{message}"
 }
 ```
 
@@ -57,7 +57,7 @@ The POST endpoint checks whether the requested timestamp is available.
 Response Body:
 ```json
 {
-  "available":"{true/false}"
+  "available": "{true/false}"
 }
 ```
 
