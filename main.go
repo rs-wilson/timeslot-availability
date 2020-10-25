@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
+const ServerPort = "6543" //TODO: make configurable
 
 func main() {
-	fmt.Println("vim-go")
+	//setup logging
+	//run & error check
 }
