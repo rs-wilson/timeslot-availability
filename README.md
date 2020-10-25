@@ -1,4 +1,5 @@
 # Timeslot Mircoservice
+This code was written as a technical challenge, and took about 4 hours to complete.
 
 ## Instructions
 Create an API using the language of your choosing that will be the foundation for an availability microservice that will help us determine if a time slot is available as well as reserve and free up time slots.
