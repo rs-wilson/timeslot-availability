@@ -1,6 +1,9 @@
 package response
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"log"
+)
 
 func ErrorResponseFromJson(js []byte) (*ErrorResponse, error) {
 	eRes := &ErrorResponse{}
@@ -16,7 +19,12 @@ type ErrorResponse struct {
 	Message string `json:"error"`
 }
 
-func (e *ErrorResponse) ToJson() (string, error) {
+func (e *ErrorResponse) ToJson() string {
 	js, err := json.Marshal(e)
-	return string(js), err
+	jsStr := string(js)
+	if err != nil {
+		log.Printf("failed to marshal error response: %s", err.Error())
+		jsStr = "internal error"
+	}
+	return jsStr
 }

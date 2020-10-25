@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"log"
 	"time"
 )
 
@@ -23,9 +24,14 @@ type TimeslotRequest struct {
 	Duration       int64 `json:"duration"`
 }
 
-func (r *TimeslotRequest) ToJson() (string, error) {
+func (r *TimeslotRequest) ToJson() string {
 	js, err := json.Marshal(r)
-	return string(js), err
+	jsStr := string(js)
+	if err != nil {
+		log.Printf("failed to marshal timeslot request: %s", err.Error())
+		jsStr = "internal error"
+	}
+	return jsStr
 }
 
 func (r *TimeslotRequest) ToTime() (time.Time, time.Duration) {

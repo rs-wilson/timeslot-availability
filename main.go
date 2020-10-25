@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/rs-wilson/timeslot-availability/server"
+	"github.com/rs-wilson/timeslot-availability/storage"
 )
 
 const ServerPort = "6543" //TODO: make configurable
@@ -24,7 +25,7 @@ func main() {
 func run() error {
 	// setup server
 	addr := fmt.Sprintf(":%s", ServerPort)
-	ts := server.NewTimeslotServer(addr)
+	ts := server.NewTimeslotServer(addr, storage.NewInMemoryTimeslotStore())
 
 	// run server
 	return ts.ListenAndServe()

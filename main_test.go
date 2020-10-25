@@ -60,8 +60,7 @@ func TestMain_EndToEnd(t *testing.T) {
 }
 
 func CheckAvailable(t *testing.T, slot time.Time, slotDur time.Duration, expected bool) {
-	js, err := request.NewTimeslotRequest(slot, slotDur).ToJson()
-	require.NoError(t, err)
+	js := request.NewTimeslotRequest(slot, slotDur).ToJson()
 	reqBody := strings.NewReader(string(js))
 
 	res, err := http.Post(fullTestAddress, "application/json", reqBody)
@@ -77,8 +76,7 @@ func CheckAvailable(t *testing.T, slot time.Time, slotDur time.Duration, expecte
 }
 
 func ReserveAvailable(t *testing.T, slot time.Time, slotDur time.Duration) {
-	js, err := request.NewTimeslotRequest(slot, slotDur).ToJson()
-	require.NoError(t, err)
+	js := request.NewTimeslotRequest(slot, slotDur).ToJson()
 	reqBody := strings.NewReader(string(js))
 
 	req, err := http.NewRequest("PUT", fullTestAddress, reqBody)
@@ -90,8 +88,7 @@ func ReserveAvailable(t *testing.T, slot time.Time, slotDur time.Duration) {
 }
 
 func ReserveUnavailable(t *testing.T, slot time.Time, slotDur time.Duration) {
-	js, err := request.NewTimeslotRequest(slot, slotDur).ToJson()
-	require.NoError(t, err)
+	js := request.NewTimeslotRequest(slot, slotDur).ToJson()
 	reqBody := strings.NewReader(string(js))
 
 	req, err := http.NewRequest("PUT", fullTestAddress, reqBody)
@@ -110,8 +107,7 @@ func ReserveUnavailable(t *testing.T, slot time.Time, slotDur time.Duration) {
 }
 
 func FreeNoSlot(t *testing.T, slot time.Time, slotDur time.Duration) {
-	js, err := request.NewTimeslotRequest(slot, slotDur).ToJson()
-	require.NoError(t, err)
+	js := request.NewTimeslotRequest(slot, slotDur).ToJson()
 	reqBody := strings.NewReader(string(js))
 
 	req, err := http.NewRequest("DELETE", fullTestAddress, reqBody)
@@ -130,8 +126,7 @@ func FreeNoSlot(t *testing.T, slot time.Time, slotDur time.Duration) {
 }
 
 func FreeSlot(t *testing.T, slot time.Time, slotDur time.Duration) {
-	js, err := request.NewTimeslotRequest(slot, slotDur).ToJson()
-	require.NoError(t, err)
+	js := request.NewTimeslotRequest(slot, slotDur).ToJson()
 	reqBody := strings.NewReader(string(js))
 
 	req, err := http.NewRequest("DELETE", fullTestAddress, reqBody)

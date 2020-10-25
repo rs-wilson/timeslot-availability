@@ -65,13 +65,13 @@ Response Body:
 The PUT endpoint attempts to reserve a timeslot.
 
 If the timeslot is available, a 200 with no body is returned and the timeslot is reserved.
-If the timeslot is not available, a 400 'bad request' with an error body is returned instead.
+If the timeslot is not available, a 409 'conflict' with an error body is returned instead.
 
 ### DELETE /v1/timeslot
 The DELETE endpoint attempts to free a reserved timeslot.
 
 If the timeslot is not available, a 204 with no body is returned.
-If the timeslot is available, a 400 'bad request' with an error body is returned instead.
+If the timeslot is available, a 404 'not found' with an error body is returned instead.
 
 ## Roadmap
 + Unit testing
@@ -79,3 +79,5 @@ If the timeslot is available, a 400 'bad request' with an error body is returned
 + Add user ID to request body for PUT
 + Add "get" endpoint to get timeslots for a given user
 + Add "rescheduled" state to deleted timestamps
++ Replace in-memory store with real DB
++ Dockerize
