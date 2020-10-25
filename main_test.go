@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var fullTestAddress = fmt.Sprintf("http://localhost:%s", ServerPort)
+var fullTestAddress = fmt.Sprintf("http://localhost:%s/v1/timeslot", ServerPort)
 
 func TestMain_EndToEnd(t *testing.T) {
 	// Ensure clean test run
@@ -23,7 +23,15 @@ func TestMain_EndToEnd(t *testing.T) {
 	// Start server
 	cmd := exec.Command("./timeslot-server")
 	cmd.Start()
-	defer cmd.Process.Kill() //ensure it's dead
+	defer func() {
+		out, err := cmd.CombinedOutput()
+		logs := string(out)
+		if err != nil {
+			logs = "{failed to retrieve logs}"
+		}
+		fmt.Printf("\nSERVER LOGS:\n%s\n\n", logs)
+		cmd.Process.Kill() //ensure it's dead
+	}()
 
 	// Give server time to start up
 	time.Sleep(1 * time.Second)
