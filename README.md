@@ -80,4 +80,5 @@ If the timeslot is available, a 404 'not found' with an error body is returned i
 + Add "get" endpoint to get timeslots for a given user
 + Add "rescheduled" state to deleted timestamps
 + Replace in-memory store with real DB
++ Make time-checking more efficient
 + Dockerize

@@ -54,9 +54,7 @@ func (ts *TimeslotServer) AvailabilityHandler(w http.ResponseWriter, req *http.R
 
 	isAvailable := ts.store.IsAvailable(slot, dur)
 	aRes := response.NewAvailabilityResponse(isAvailable)
-	w.Write([]byte(aRes.ToJson()))
-
-	w.WriteHeader(http.StatusOK) //200
+	w.Write([]byte(aRes.ToJson())) //200 OK
 }
 
 func (ts *TimeslotServer) ReserveHandler(w http.ResponseWriter, req *http.Request) {

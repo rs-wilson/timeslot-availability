@@ -36,6 +36,6 @@ func (r *TimeslotRequest) ToJson() string {
 
 func (r *TimeslotRequest) ToTime() (time.Time, time.Duration) {
 	startTime := time.Unix(r.StartTimestamp, 0)
-	dur := time.Duration(r.Duration)
+	dur := time.Duration(r.Duration * 1e9) //seconds to nanoseconds
 	return startTime, dur
 }

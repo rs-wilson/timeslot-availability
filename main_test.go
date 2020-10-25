@@ -20,18 +20,16 @@ func TestMain_EndToEnd(t *testing.T) {
 	// Ensure clean test run
 	exec.Command("pkill timeslot-server").Run()
 
-	// Start server
+	// server cmd
 	cmd := exec.Command("./timeslot-server")
-	cmd.Start()
-	defer func() {
-		out, err := cmd.CombinedOutput()
-		logs := string(out)
-		if err != nil {
-			logs = "{failed to retrieve logs}"
+	t.Cleanup(func() {
+		if cmd.Process != nil {
+			cmd.Process.Kill() //ensure it's dead, even on a bad test run
 		}
-		fmt.Printf("\nSERVER LOGS:\n%s\n\n", logs)
-		cmd.Process.Kill() //ensure it's dead
-	}()
+	})
+
+	// Start server, but don't wait. logs will be in the log.txt file
+	cmd.Start()
 
 	// Give server time to start up
 	time.Sleep(1 * time.Second)
@@ -44,19 +42,29 @@ func TestMain_EndToEnd(t *testing.T) {
 	// Perform & verify
 	CheckAvailable(t, startTime, slotDur, true)
 
+	// Ensure reserving works
 	ReserveAvailable(t, startTime, slotDur)
 
-	CheckAvailable(t, offsetTime, slotDur, false)
+	// Ensure the reservation is now blocked
+	CheckAvailable(t, startTime, slotDur, false)
 
+	// Ensure overlap works
+	CheckAvailable(t, startTime, slotDur, false)
+
+	// Error check on unavailable reservation
 	ReserveUnavailable(t, offsetTime, slotDur)
 
+	// Error check on freeing a non-slot
 	FreeNoSlot(t, offsetTime, slotDur)
 
+	// Ensure we can free our original reservation
 	FreeSlot(t, startTime, slotDur)
 
-	CheckAvailable(t, offsetTime, slotDur, true)
+	// Ensure the free actually worked
+	CheckAvailable(t, startTime, slotDur, true)
 
-	FreeNoSlot(t, offsetTime, slotDur)
+	// Ensure we can reserve the new time
+	ReserveAvailable(t, offsetTime, slotDur)
 }
 
 func CheckAvailable(t *testing.T, slot time.Time, slotDur time.Duration, expected bool) {
@@ -96,7 +104,7 @@ func ReserveUnavailable(t *testing.T, slot time.Time, slotDur time.Duration) {
 	req.Header.Set("Context-Type", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
-	require.Equal(t, res.StatusCode, 400)
+	require.Equal(t, res.StatusCode, 409)
 
 	bodyBytes, err := ioutil.ReadAll(res.Body)
 	require.NoError(t, err)
@@ -115,7 +123,7 @@ func FreeNoSlot(t *testing.T, slot time.Time, slotDur time.Duration) {
 	req.Header.Set("Context-Type", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
-	require.Equal(t, res.StatusCode, 400)
+	require.Equal(t, res.StatusCode, 404)
 
 	bodyBytes, err := ioutil.ReadAll(res.Body)
 	require.NoError(t, err)
