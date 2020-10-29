@@ -21,7 +21,7 @@ func NewTimeslotServer(listenAddr string, tsStore TimeslotStore) *TimeslotServer
 	}
 
 	// Define endpoints & handlers
-	r.Post("/v1/timeslot", server.AvailabilityHandler)
+	r.Get("/v1/timeslot", server.AvailabilityHandler)
 	r.Put("/v1/timeslot", server.ReserveHandler)
 	r.Delete("/v1/timeslot", server.FreeHandler)
 
@@ -46,11 +46,13 @@ func (ts *TimeslotServer) ListenAndServe() error {
 }
 
 func (ts *TimeslotServer) AvailabilityHandler(w http.ResponseWriter, req *http.Request) {
-	tsReq, ok := extractTimeslotRequest(w, req)
-	if !ok {
+	slot, dur, err := request.ExtractSlotQueryParams(req)
+	if err != nil {
+		log.Printf("invalid request recieved: %s", err)
+		js := response.NewErrorResponse("invalid request").ToJson()
+		http.Error(w, js, 400)
 		return
 	}
-	slot, dur := tsReq.ToTime()
 
 	isAvailable := ts.store.IsAvailable(slot, dur)
 	aRes := response.NewAvailabilityResponse(isAvailable)

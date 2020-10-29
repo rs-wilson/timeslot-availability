@@ -33,16 +33,6 @@ This project uses a Makefile. You can run `make` to build and test the codebase.
 `make run`
 
 ## Endpoints
-All endpoints use the same json request body to determine the timeslot.
-
-Request Body:
-```json
-{
-  "start_timestamp": "{unix_timestamp_seconds}",
-  "duration": "{seconds}"
-}
-```
-
 If an error occurs, the error message will be returned in a response body with this format:
 
 Error Body:
@@ -52,8 +42,12 @@ Error Body:
 }
 ```
 
-### POST /v1/timeslot
-The POST endpoint checks whether the requested timestamp is available.
+### GET /v1/timeslot?start_timestamp={unix_timestamp_seconds}&duration={seconds}
+The GET endpoint checks whether the requested timestamp is available.
+
+This endpoint expects two query parameters:
++ `start_timestamp` - a unix timestamp in seconds
++ `duration` - a duration in seconds
 
 Response Body:
 ```json
@@ -62,14 +56,32 @@ Response Body:
 }
 ```
 
+If the query parameters are not set appropriately, a `400` error is returned.
+
 ### PUT /v1/timeslot
 The PUT endpoint attempts to reserve a timeslot.
+
+Request Body:
+```json
+{
+  "start_timestamp": "{unix_timestamp_seconds}",
+  "duration": "{seconds}"
+}
+```
 
 If the timeslot is available, a 200 with no body is returned and the timeslot is reserved.
 If the timeslot is not available, a 409 'conflict' with an error body is returned instead.
 
 ### DELETE /v1/timeslot
 The DELETE endpoint attempts to free a reserved timeslot.
+
+Request Body:
+```json
+{
+  "start_timestamp": "{unix_timestamp_seconds}",
+  "duration": "{seconds}"
+}
+```
 
 If the timeslot is not available, a 204 with no body is returned.
 If the timeslot is available, a 404 'not found' with an error body is returned instead.

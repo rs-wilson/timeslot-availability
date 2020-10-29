@@ -78,10 +78,10 @@ func TestMain_EndToEnd(t *testing.T) {
 }
 
 func CheckAvailable(t *testing.T, slot time.Time, slotDur time.Duration, expected bool) {
-	js := request.NewTimeslotRequest(slot, slotDur).ToJson()
-	reqBody := strings.NewReader(string(js))
+	slotReq := request.NewTimeslotRequest(slot, slotDur) //convert to appropriate timestamps
 
-	res, err := http.Post(fullTestAddress, "application/json", reqBody)
+	addrWithParams := fmt.Sprintf("%s?start_timestamp=%d&duration=%d", fullTestAddress, slotReq.StartTimestamp, slotReq.Duration)
+	res, err := http.Get(addrWithParams)
 	require.NoError(t, err)
 	require.Equal(t, res.StatusCode, 200)
 
