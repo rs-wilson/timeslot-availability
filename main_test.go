@@ -40,31 +40,41 @@ func TestMain_EndToEnd(t *testing.T) {
 	slotDur := time.Hour
 
 	// Perform & verify
-	CheckAvailable(t, startTime, slotDur, true)
+	t.Run("Check clear availability", func(t *testing.T) {
+		CheckAvailable(t, startTime, slotDur, true)
+	})
 
-	// Ensure reserving works
-	ReserveAvailable(t, startTime, slotDur)
+	t.Run("Check reserving available slot", func(t *testing.T) {
+		ReserveAvailable(t, startTime, slotDur)
+	})
 
-	// Ensure the reservation is now blocked
-	CheckAvailable(t, startTime, slotDur, false)
+	t.Run("Ensure reservation is blocked", func(t *testing.T) {
+		CheckAvailable(t, startTime, slotDur, false)
+	})
 
-	// Ensure overlap works
-	CheckAvailable(t, startTime, slotDur, false)
+	t.Run("Check overlapping time slots", func(t *testing.T) {
+		CheckAvailable(t, startTime, slotDur, false)
+	})
 
-	// Error check on unavailable reservation
-	ReserveUnavailable(t, offsetTime, slotDur)
+	t.Run("Ensure error on unavailable reservation", func(t *testing.T) {
+		ReserveUnavailable(t, offsetTime, slotDur)
+	})
 
-	// Error check on freeing a non-slot
-	FreeNoSlot(t, offsetTime, slotDur)
+	t.Run("Ensure error on freeing not a full slot", func(t *testing.T) {
+		FreeNoSlot(t, offsetTime, slotDur)
+	})
 
-	// Ensure we can free our original reservation
-	FreeSlot(t, startTime, slotDur)
+	t.Run("Ensure no error on freeing a full slot", func(t *testing.T) {
+		FreeSlot(t, startTime, slotDur)
+	})
 
-	// Ensure the free actually worked
-	CheckAvailable(t, startTime, slotDur, true)
+	t.Run("Ensure a deleted slot is actually free", func(t *testing.T) {
+		CheckAvailable(t, startTime, slotDur, true)
+	})
 
-	// Ensure we can reserve the new time
-	ReserveAvailable(t, offsetTime, slotDur)
+	t.Run("Ensure no error on reserving over a deleted slot", func(t *testing.T) {
+		ReserveAvailable(t, offsetTime, slotDur)
+	})
 }
 
 func CheckAvailable(t *testing.T, slot time.Time, slotDur time.Duration, expected bool) {

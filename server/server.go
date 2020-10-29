@@ -30,7 +30,7 @@ func NewTimeslotServer(listenAddr string, tsStore TimeslotStore) *TimeslotServer
 
 type TimeslotStore interface {
 	IsAvailable(time.Time, time.Duration) bool
-	Reserve(time.Time, time.Duration) error
+	Reserve(time.Time, time.Duration) (bool, error)
 	Delete(time.Time, time.Duration) (bool, error)
 }
 
@@ -64,14 +64,12 @@ func (ts *TimeslotServer) ReserveHandler(w http.ResponseWriter, req *http.Reques
 	}
 	slot, dur := tsReq.ToTime()
 
-	isAvailable := ts.store.IsAvailable(slot, dur)
+	isAvailable, err := ts.store.Reserve(slot, dur)
 	if !isAvailable {
 		js := response.NewErrorResponse("the requested time slot is not available").ToJson()
 		http.Error(w, js, 409)
 		return
 	}
-
-	err := ts.store.Reserve(slot, dur)
 	if err != nil {
 		log.Printf("error reserving timeslot: %s", err.Error())
 		js := response.NewErrorResponse("internal error").ToJson()
